@@ -1,0 +1,7 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+
+  # Fix common mistaken URL: /build/build/web -> /build/web
+  RewriteRule ^build/build/web/?$ /vivian_cosmetic_shop_application/build/web/ [R=302,L]
+  RewriteRule ^build/build/web/(.*)$ /vivian_cosmetic_shop_application/build/web/$1 [R=302,L]
+</IfModule>
