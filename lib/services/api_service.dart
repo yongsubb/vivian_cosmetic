@@ -15,6 +15,9 @@ import 'token_storage/token_storage.dart';
 
 /// API Configuration
 class ApiConfig {
+  static const String defaultProductionBaseUrl =
+      'https://vivian-cosmetic-backend.onrender.com';
+
   // Change this to your backend URL
   // For Android physical device, use your PC's IP (e.g., 192.168.1.8)
   // For Android emulator use: 10.0.2.2
@@ -54,22 +57,11 @@ class ApiConfig {
       return _normalizeBaseUrl('$scheme://$host');
     }
 
-    // For physical Android device via USB debugging, use your PC's local IP
-    // You can find it by running: ipconfig (Windows) or ifconfig (Mac/Linux)
-    if (defaultTargetPlatform == TargetPlatform.android) {
-      // If using physical device (USB debugging), use your PC's IP address:
-      // Current IP: 192.168.1.8 (Update this if your IP changes)
-      return _normalizeBaseUrl('http://10.81.31.46:5000');
-
-      // If using Android emulator, uncomment this line instead:
-      // return 'http://10.0.2.2:5000';
-    } else if (defaultTargetPlatform == TargetPlatform.iOS) {
-      // iOS simulator can use localhost
-      return _normalizeBaseUrl('http://localhost:5000');
-    } else {
-      // Windows/Linux/MacOS desktop
-      return _normalizeBaseUrl('http://localhost:5000');
-    }
+    // Mobile/desktop builds:
+    // Default to production so installed APKs work anywhere.
+    // For local dev, override using:
+    // `--dart-define=API_BASE_URL=http://<your-lan-ip>:5000`
+    return _normalizeBaseUrl(defaultProductionBaseUrl);
   }
 
   static String _normalizeBaseUrl(String raw) {

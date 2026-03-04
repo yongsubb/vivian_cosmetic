@@ -5,7 +5,9 @@ import '../constants/app_colors.dart';
 /// App Theme Configuration — Material 3
 class AppTheme {
   // ─── Shared helpers ────────────────────────────────────────────────
-  static final _poppins = GoogleFonts.poppins();
+  static final _poppins = GoogleFonts.poppins().copyWith(
+    fontFamilyFallback: ['Roboto', 'Noto Sans', 'sans-serif'],
+  );
 
   static TextTheme _buildTextTheme({
     required Color primary,
