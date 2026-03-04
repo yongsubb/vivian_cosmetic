@@ -122,6 +122,7 @@ class ResponsiveNavigationShellState extends State<ResponsiveNavigationShell> {
       idx('Dashboard'),
       idx('Point of Sales'),
       idx('Products'),
+      idx('Transactions'),
       idx('Loyalty'),
       if (_canViewAnalytics) idx('Analytics'),
       idx('Settings'),
@@ -888,16 +889,76 @@ class _MobileBottomNav extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return NavigationBar(
-      selectedIndex: currentIndex,
-      onDestinationSelected: onItemSelected,
-      destinations: items.map((item) {
-        return NavigationDestination(
-          icon: Icon(item.icon),
-          selectedIcon: Icon(item.selectedIcon ?? item.icon),
-          label: _compactLabel(item, items.length),
-        );
-      }).toList(),
+    // Keep this nav horizontally scrollable to avoid label wrapping/overlap
+    // when there are many destinations or long labels.
+    final theme = Theme.of(context);
+    final colorScheme = theme.colorScheme;
+
+    return Material(
+      color: colorScheme.surface,
+      child: SafeArea(
+        top: false,
+        child: SingleChildScrollView(
+          scrollDirection: Axis.horizontal,
+          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 8),
+          child: Row(
+            children: List.generate(items.length, (index) {
+              final item = items[index];
+              final selected = index == currentIndex;
+              final label = _compactLabel(item, items.length);
+
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 4),
+                child: InkWell(
+                  borderRadius: BorderRadius.circular(14),
+                  onTap: () => onItemSelected(index),
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 180),
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 14,
+                      vertical: 8,
+                    ),
+                    decoration: BoxDecoration(
+                      color: selected
+                          ? colorScheme.primary.withValues(alpha: 0.12)
+                          : Colors.transparent,
+                      borderRadius: BorderRadius.circular(14),
+                    ),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(
+                          selected
+                              ? (item.selectedIcon ?? item.icon)
+                              : item.icon,
+                          color: selected
+                              ? colorScheme.primary
+                              : colorScheme.outline,
+                          size: 24,
+                        ),
+                        const SizedBox(height: 4),
+                        Text(
+                          label,
+                          maxLines: 1,
+                          overflow: TextOverflow.ellipsis,
+                          style: theme.textTheme.labelSmall?.copyWith(
+                            color: selected
+                                ? colorScheme.primary
+                                : colorScheme.outline,
+                            fontWeight: selected
+                                ? FontWeight.w600
+                                : FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              );
+            }),
+          ),
+        ),
+      ),
     );
   }
 }
