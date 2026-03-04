@@ -30,11 +30,28 @@ class ApiConfig {
     if (kIsWeb) {
       // Use the browser host so the app works via LAN IP too.
       // Example: if opened at http://192.168.1.10/... then API defaults to http://192.168.1.10:5000
-      final host = Uri.base.host;
-      final scheme = Uri.base.scheme.isNotEmpty ? Uri.base.scheme : 'http';
-      return _normalizeBaseUrl(
-        '$scheme://${host.isNotEmpty ? host : 'localhost'}:5000',
-      );
+      final base = Uri.base;
+      final host = base.host.isNotEmpty ? base.host : 'localhost';
+      final scheme = base.scheme.isNotEmpty ? base.scheme : 'http';
+
+      final isLocalHost =
+          host == 'localhost' || host == '127.0.0.1' || host == '::1';
+      final isPrivateIp = RegExp(
+        r'^(10\.|192\.168\.|172\.(1[6-9]|2\d|3[0-1])\.)',
+      ).hasMatch(host);
+
+      // On Render (and most hosting), public traffic is served on 443/https.
+      // Attempting to call `:5000` will time out. For local/LAN dev we keep `:5000`.
+      if (isLocalHost || isPrivateIp) {
+        return _normalizeBaseUrl('$scheme://$host:5000');
+      }
+
+      // Preserve a non-standard port only if the site itself is being accessed on one.
+      if (base.hasPort && base.port != 80 && base.port != 443) {
+        return _normalizeBaseUrl('$scheme://$host:${base.port}');
+      }
+
+      return _normalizeBaseUrl('$scheme://$host');
     }
 
     // For physical Android device via USB debugging, use your PC's local IP
