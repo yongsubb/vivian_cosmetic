@@ -1,0 +1,74 @@
+name: Release (build + attach APK)
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: "Tag name to release (e.g., v1.1.2)"
+        required: true
+        type: string
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    env:
+      API_BASE_URL: ${{ vars.API_BASE_URL || 'https://vivian-cosmetic-backend.onrender.com' }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+
+      - name: Set up Flutter
+        uses: subosito/flutter-action@v2
+        with:
+          channel: stable
+          cache: true
+
+      - name: Pub get
+        run: flutter pub get
+
+      - name: Build web
+        run: flutter build web --release --dart-define=API_BASE_URL=$API_BASE_URL
+
+      - name: Package web build
+        run: |
+          cd build/web
+          zip -r ../../vivian-cosmetic-shop-web.zip .
+
+      - name: Build Android APK (debug)
+        run: flutter build apk --debug
+
+      - name: Rename APK
+        run: cp build/app/outputs/flutter-apk/app-debug.apk ./vivian-cosmetic-shop.apk
+
+      - name: Determine tag
+        id: tag
+        shell: bash
+        run: |
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "name=${{ inputs.tag }}" >> $GITHUB_OUTPUT
+          else
+            echo "name=${GITHUB_REF_NAME}" >> $GITHUB_OUTPUT
+          fi
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.tag.outputs.name }}
+          generate_release_notes: true
+          files: |
+            vivian-cosmetic-shop.apk
+            vivian-cosmetic-shop-web.zip
