@@ -486,10 +486,11 @@ class _LoginScreenState extends State<LoginScreen> {
                               ),
                             ],
                           ),
-                          child: const Icon(
-                            Icons.storefront_rounded,
-                            size: 70,
-                            color: AppColors.primary,
+                          child: ClipOval(
+                            child: Image.asset(
+                              'assets/payment/icon-logo/vivian-cosmetic-shop-logo.png',
+                              fit: BoxFit.cover,
+                            ),
                           ),
                         ),
                         const SizedBox(height: 40),
@@ -609,7 +610,6 @@ class _LoginScreenState extends State<LoginScreen> {
           width: 120,
           height: 120,
           decoration: BoxDecoration(
-            gradient: AppColors.primaryGradient,
             shape: BoxShape.circle,
             boxShadow: [
               BoxShadow(
@@ -619,10 +619,11 @@ class _LoginScreenState extends State<LoginScreen> {
               ),
             ],
           ),
-          child: const Icon(
-            Icons.storefront_rounded,
-            size: 60,
-            color: AppColors.white,
+          child: ClipOval(
+            child: Image.asset(
+              'assets/payment/icon-logo/vivian-cosmetic-shop-logo.png',
+              fit: BoxFit.cover,
+            ),
           ),
         ),
         const SizedBox(height: 24),

@@ -28,7 +28,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE instance, _In_opt_ HINSTANCE prev,
   Win32Window::Point origin(10, 10);
   // 6.78-inch mobile screen size (412x892 matches typical phone dimensions)
   Win32Window::Size size(412, 892);
-  if (!window.Create(L"vivian_cosmetic_shop_application", origin, size)) {
+  if (!window.Create(L"Vivian Cosmetic Shop", origin, size)) {
     return EXIT_FAILURE;
   }
   window.SetQuitOnClose(true);
