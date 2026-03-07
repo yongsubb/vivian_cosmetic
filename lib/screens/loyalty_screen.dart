@@ -1221,41 +1221,55 @@ class _LoyaltyScreenState extends State<LoyaltyScreen>
                 ),
                 // Actions (restricted for cashiers)
                 if (!_isCashier)
-                  Column(
-                    children: [
-                      IconButton(
-                        icon: const Icon(Icons.credit_card),
-                        onPressed: () => _showCardDialog(member),
-                        color: AppColors.primary,
-                        tooltip: 'View Card',
-                      ),
-                      if (_shouldShowRenew(member))
-                        IconButton(
-                          icon: const Icon(Icons.autorenew),
-                          onPressed: () => _confirmRenewMember(member),
-                          color: Colors.orange,
-                          tooltip: 'Renew Membership',
+                  SizedBox(
+                    width: 48,
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        SizedBox(
+                          width: 40,
+                          height: 40,
+                          child: IconButton(
+                            padding: EdgeInsets.zero,
+                            icon: const Icon(Icons.credit_card, size: 20),
+                            onPressed: () => _showCardDialog(member),
+                            color: AppColors.primary,
+                            tooltip: 'View Card',
+                          ),
                         ),
-                      if (member['card_issued'] != true)
-                        Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 10,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.orange,
-                            borderRadius: BorderRadius.circular(4),
-                          ),
-                          child: const Text(
-                            'Pending',
-                            style: TextStyle(
-                              color: Colors.white,
-                              fontSize: 10,
-                              fontWeight: FontWeight.w600,
+                        if (_shouldShowRenew(member))
+                          SizedBox(
+                            width: 40,
+                            height: 40,
+                            child: IconButton(
+                              padding: EdgeInsets.zero,
+                              icon: const Icon(Icons.autorenew, size: 20),
+                              onPressed: () => _confirmRenewMember(member),
+                              color: Colors.orange,
+                              tooltip: 'Renew Membership',
                             ),
                           ),
-                        ),
-                    ],
+                        if (member['card_issued'] != true)
+                          Container(
+                            padding: const EdgeInsets.symmetric(
+                              horizontal: 6,
+                              vertical: 3,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.orange,
+                              borderRadius: BorderRadius.circular(4),
+                            ),
+                            child: const Text(
+                              'Pending',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 9,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                          ),
+                      ],
+                    ),
                   ),
               ],
             ),
